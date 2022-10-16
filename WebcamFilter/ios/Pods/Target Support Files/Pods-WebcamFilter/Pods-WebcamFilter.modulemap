@@ -1,0 +1,6 @@
+module Pods_WebcamFilter {
+  umbrella header "Pods-WebcamFilter-umbrella.h"
+
+  export *
+  module * { export * }
+}

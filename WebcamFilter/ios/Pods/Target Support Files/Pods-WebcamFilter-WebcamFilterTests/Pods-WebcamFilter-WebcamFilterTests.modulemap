@@ -1,0 +1,6 @@
+module Pods_WebcamFilter_WebcamFilterTests {
+  umbrella header "Pods-WebcamFilter-WebcamFilterTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
