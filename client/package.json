@@ -1,6 +1,6 @@
 {
-  "name": "webcamfilter",
-  "productName": "webcamfilter",
+  "name": "webcam-filter",
+  "productName": "webcam-filter",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
@@ -21,7 +21,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "webcamfilter"
+            "name": "webcam-filter"
           }
         },
         {
@@ -89,6 +89,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-spinners": "^0.13.6",
-    "react-webcam": "^7.0.1"
+    "react-webcam": "^7.0.1",
+    "socket.io-client": "^4.5.3"
   }
 }

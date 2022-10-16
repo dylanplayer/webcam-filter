@@ -1,15 +1,23 @@
-import React, { EventHandler, SyntheticEvent, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import { ScaleLoader } from 'react-spinners';
+import { io } from 'socket.io-client';
 
 import styles from './CameraView.module.css';
 import { useWindowDimensions } from '../../../src/hooks/';
 
 export function CameraView() {
+  const webcamRef = useRef<Webcam | null>(null);
   const { width } = useWindowDimensions();
   const [deviceId, setDeviceId] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const [active, setActive] = useState(false);
+  const [socketloop, setSocketloop] = useState<any>();
+
+  const socket = io('http://localhost:8001', {
+    path: '/',
+  });
 
   useEffect(() => {
     if (devices.length === 0) {
@@ -18,7 +26,6 @@ export function CameraView() {
         setLoading(false);
       });
     }
-    console.log(devices)
   });
 
   useEffect(() => {
@@ -29,7 +36,27 @@ export function CameraView() {
 
   const handleDeviceChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setDeviceId(devices.find((device) => device.deviceId === event.target.value).deviceId);
-    console.log(deviceId);
+  }
+
+  const startStream = async () => {
+    if (!active) {
+      setSocketloop(setInterval(() => {
+      socket.emit('stream', getFrame())
+      }));
+    } else {
+      clearInterval(socketloop);
+    }
+    setActive(!active);
+  }
+
+  const getFrame = () => {
+    const video = webcamRef.current.video;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const frame = canvas.toDataURL('image/webp');
+    return frame;
   }
 
   if (loading) {
@@ -72,8 +99,10 @@ export function CameraView() {
       </select>
       <Webcam 
         videoConstraints={videoConstraints}
+        ref={webcamRef}
         mirrored
       />
+      <button onClick={startStream}>{ active ? "Stop" : "Start" }</button>
     </div>
   );
 }
